@@ -2,7 +2,7 @@ defmodule AdventOfCode.Day04Test do
   use ExUnit.Case
 
   import AdventOfCode.Day04
-
+  @tag :skip
   test "part1" do
     # input = """
     # MMMSXXMASM
@@ -23,9 +23,9 @@ defmodule AdventOfCode.Day04Test do
     assert result
   end
 
-  @tag :skip
   test "part2" do
     input = AdventOfCode.Input.get!(4)
+
     result = part2(input)
 
     assert result

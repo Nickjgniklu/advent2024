@@ -1,10 +1,14 @@
 defmodule AdventOfCode.Day04 do
   def get_point(grid, x, y, max_x, max_y) do
-    if x < 0 or x >= max_x or y < 0 or y >= max_y do
-      "."
-    else
-      grid |> Enum.at(y) |> String.at(x)
-    end
+    v =
+      if x < 0 or x >= max_x or y < 0 or y >= max_y do
+        "."
+      else
+        grid |> Enum.at(y) |> String.at(x)
+      end
+
+    IO.puts("grid x: #{x}, y: #{y} c: #{v}")
+    v
   end
 
   def get_strings_from_point(grid, x, y, max_x, max_y) do
@@ -68,6 +72,44 @@ defmodule AdventOfCode.Day04 do
     ]
   end
 
+  def get_cross_from_point(grid, x, y, max_x, max_y) do
+    IO.puts("x: #{x}, y: #{y}")
+
+    top_left =
+      for i <- -1..1 do
+        get_point(grid, x + i, y + i, max_x, max_y)
+      end
+      |> Enum.join()
+
+    top_right =
+      for i <- -1..1 do
+        get_point(grid, x - i, y + i, max_x, max_y)
+      end
+      |> Enum.join()
+
+    bottom_left =
+      for i <- -1..1 do
+        get_point(grid, x + i, y - i, max_x, max_y)
+      end
+      |> Enum.join()
+
+    bottom_right =
+      for i <- -1..1 do
+        get_point(grid, x - i, y - i, max_x, max_y)
+      end
+      |> Enum.join()
+
+    IO.puts("\n")
+
+    [
+      top_left <> bottom_left,
+      top_left <> top_right,
+      bottom_right <> bottom_left,
+      bottom_right <> top_right
+    ]
+    |> IO.inspect(label: "#{x}, #{y}")
+  end
+
   def part1(normal) do
     lines =
       normal
@@ -92,6 +134,29 @@ defmodule AdventOfCode.Day04 do
     |> IO.inspect()
   end
 
-  def part2(_args) do
+  def part2(normal) do
+    lines =
+      normal
+      |> String.split("\n", trim: true)
+
+    line_length = lines |> Enum.at(0) |> String.length()
+    line_count = Enum.count(lines)
+
+    for x <- 0..(line_length - 1), y <- 0..(line_count - 1) do
+      strings = get_cross_from_point(lines, x, y, line_length, line_count)
+
+      Enum.any?(strings, fn string ->
+        string == "MASSAM" || string == "MASMAS" || string == "SAMSAM" || string == "SAMMAS"
+      end)
+      |> then(fn x ->
+        if x do
+          1
+        else
+          0
+        end
+      end)
+    end
+    |> Enum.sum()
+    |> IO.inspect()
   end
 end
