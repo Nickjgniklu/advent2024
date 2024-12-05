@@ -29,6 +29,28 @@ defmodule AdventOfCode.Day02 do
     end
   end
 
-  def part2(_args) do
+  defp is_validp(report) do
+    0..(length(report) - 1)
+    |> Enum.map(fn index ->
+      meh = List.delete_at(report, index)
+      is_valid(meh)
+    end)
+    |> Enum.any?(&(&1 == 1))
+    |> then(fn
+      true -> 1
+      false -> 0
+    end)
+  end
+
+  def part2(args) do
+    args
+    |> String.split("\n", trim: true)
+    |> Enum.map(fn sr ->
+      String.split(sr, " ", trim: true)
+      |> Enum.map(&String.to_integer/1)
+    end)
+    |> Enum.map(&is_validp/1)
+    |> Enum.sum()
+    |> dbg()
   end
 end
